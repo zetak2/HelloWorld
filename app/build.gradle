@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events "passed", "failed"//, "standardError"
+                showCauses true
+                showExceptions true
+            }
+        }
+    }
+    sourceSets {
+        test {
+            java.srcDir file('src/test/java')
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile file("../signingtest.jks")
+            storePassword "signingtest"
+            keyAlias "signingtest"
+            keyPassword "signingtest"
+        }
+    }
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "alvarez.manuel.helloworld"
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 26
+        versionName "1.0.7"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+tasks.withType(Test) {
+    useTestNG() {
+        listeners << 'org.testng.reporters.EmailableReporter'
+    }
+    scanForTestClasses = false
+    include "**/*Test*.class" // whatever Ant pattern matches your test class files
+}
+
+dependencies {
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
+    testImplementation 'io.appium:java-client:7.1.0'
+    testImplementation 'org.testng:testng:6.14.3'
+    testImplementation 'junit:junit:4.12'
+}
